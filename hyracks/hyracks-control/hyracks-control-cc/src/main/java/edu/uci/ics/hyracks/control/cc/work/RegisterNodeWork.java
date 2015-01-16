@@ -59,7 +59,12 @@ public class RegisterNodeWork extends SynchronizableWork {
             }
             nodeMap.put(id, state);
             Map<String, Set<String>> ipAddressNodeNameMap = ccs.getIpAddressNodeNameMap();
+            // QQQ Breach of encapsulation here - way too much duplicated data
+            // in NodeRegistration
             String ipAddress = state.getNCConfig().dataIPAddress;
+            if (state.getNCConfig().dataPublicIPAddress != null) {
+                ipAddress = state.getNCConfig().dataPublicIPAddress;
+            }
             ncConfiguration = new HashMap<String, String>();
             state.getNCConfig().toMap(ncConfiguration);
             Set<String> nodes = ipAddressNodeNameMap.get(ipAddress);

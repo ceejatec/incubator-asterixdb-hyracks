@@ -45,6 +45,7 @@ import org.apache.commons.lang3.mutable.MutableObject;
 
 import edu.uci.ics.hyracks.api.application.INCApplicationEntryPoint;
 import edu.uci.ics.hyracks.api.client.NodeControllerInfo;
+import edu.uci.ics.hyracks.api.comm.NetworkAddress;
 import edu.uci.ics.hyracks.api.context.IHyracksRootContext;
 import edu.uci.ics.hyracks.api.dataset.IDatasetPartitionManager;
 import edu.uci.ics.hyracks.api.deployment.DeploymentId;
@@ -265,8 +266,17 @@ public class NodeControllerService extends AbstractRemoteService {
             gcInfos[i] = new HeartbeatSchema.GarbageCollectorInfo(gcMXBeans.get(i).getName());
         }
         HeartbeatSchema hbSchema = new HeartbeatSchema(gcInfos);
-        ccs.registerNode(new NodeRegistration(ipc.getSocketAddress(), id, ncConfig, netManager.getNetworkAddress(),
-                datasetNetworkManager.getNetworkAddress(), osMXBean.getName(), osMXBean.getArch(), osMXBean
+        // Use "public" versions of network addresses and ports, if specified
+        NetworkAddress datasetAddress = datasetNetworkManager.getNetworkAddress();
+        if (ncConfig.resultPublicIPAddress != null) {
+            datasetAddress = new NetworkAddress(ncConfig.resultPublicIPAddress, ncConfig.resultPublicPort);
+        }
+        NetworkAddress netAddress = netManager.getNetworkAddress();
+        if (ncConfig.dataPublicIPAddress != null) {
+            netAddress = new NetworkAddress(ncConfig.dataPublicIPAddress, ncConfig.dataPublicPort);
+        }
+        ccs.registerNode(new NodeRegistration(ipc.getSocketAddress(), id, ncConfig, netAddress,
+                datasetAddress, osMXBean.getName(), osMXBean.getArch(), osMXBean
                         .getVersion(), osMXBean.getAvailableProcessors(), runtimeMXBean.getVmName(), runtimeMXBean
                         .getVmVersion(), runtimeMXBean.getVmVendor(), runtimeMXBean.getClassPath(), runtimeMXBean
                         .getLibraryPath(), runtimeMXBean.getBootClassPath(), runtimeMXBean.getInputArguments(),
