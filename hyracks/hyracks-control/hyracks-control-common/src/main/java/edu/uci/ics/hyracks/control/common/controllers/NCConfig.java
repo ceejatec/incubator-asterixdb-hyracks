@@ -28,13 +28,13 @@ public class NCConfig implements Serializable {
     @Option(name = "-cc-host", usage = "Cluster Controller host name", required = true)
     public String ccHost;
 
-    @Option(name = "-cc-port", usage = "Cluster Controller port (default: 1099)")
+    @Option(name = "-cc-port", usage = "Cluster Controller port (default: 1099)", required = false)
     public int ccPort = 1099;
 
     @Option(name = "-cluster-net-ip-address", usage = "IP Address to bind cluster listener", required = true)
     public String clusterNetIPAddress;
 
-    @Option(name = "-cluster-net-port", usage = "IP port to bind cluster listener (default: random port)", required = true)
+    @Option(name = "-cluster-net-port", usage = "IP port to bind cluster listener (default: random port)", required = false)
     public int clusterNetPort = 0;
 
     @Option(name = "-node-id", usage = "Logical name of node controller unique within the cluster", required = true)
@@ -43,13 +43,13 @@ public class NCConfig implements Serializable {
     @Option(name = "-data-ip-address", usage = "IP Address to bind data listener", required = true)
     public String dataIPAddress;
 
-    @Option(name = "-data-ip-port", usage = "IP port to bind data listener (default: random port)", required = true)
+    @Option(name = "-data-ip-port", usage = "IP port to bind data listener (default: random port)", required = false)
     public int dataPort = 0;
 
     @Option(name = "-result-ip-address", usage = "IP Address to bind dataset result distribution listener", required = true)
     public String datasetIPAddress;
 
-    @Option(name = "-result-ip-port", usage = "IP port to bind result distribution listener (default: random port)", required = true)
+    @Option(name = "-result-ip-port", usage = "IP port to bind result distribution listener (default: random port)", required = false)
     public int datasetPort = 0;
 
     @Option(name = "-iodevices", usage = "Comma separated list of IO Device mount points (default: One device in default temp folder)", required = false)
