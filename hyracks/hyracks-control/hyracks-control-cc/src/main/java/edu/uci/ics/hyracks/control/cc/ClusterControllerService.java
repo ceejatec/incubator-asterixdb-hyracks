@@ -331,7 +331,7 @@ public class ClusterControllerService extends AbstractRemoteService {
     }
 
     public NetworkAddress getDatasetDirectoryServiceInfo() {
-        return new NetworkAddress(ccConfig.clientNetIpAddress.getBytes(), ccConfig.clientNetPort);
+        return new NetworkAddress(ccConfig.clientNetIpAddress, ccConfig.clientNetPort);
     }
 
     private class DeadNodeSweeper extends TimerTask {
