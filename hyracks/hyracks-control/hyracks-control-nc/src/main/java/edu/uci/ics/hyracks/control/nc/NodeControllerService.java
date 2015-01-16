@@ -161,7 +161,7 @@ public class NodeControllerService extends AbstractRemoteService {
         this.ncConfig = ncConfig;
         id = ncConfig.nodeId;
         NodeControllerIPCI ipci = new NodeControllerIPCI();
-        ipc = new IPCSystem(new InetSocketAddress(ncConfig.clusterNetIPAddress, 0), ipci,
+        ipc = new IPCSystem(new InetSocketAddress(ncConfig.clusterNetIPAddress, ncConfig.clusterNetPort), ipci,
                 new CCNCFunctions.SerializerDeserializer());
 
         this.ctx = new RootHyracksContext(this, new IOManager(getDevices(ncConfig.ioDevices)));
@@ -169,7 +169,7 @@ public class NodeControllerService extends AbstractRemoteService {
             throw new Exception("id not set");
         }
         partitionManager = new PartitionManager(this);
-        netManager = new NetworkManager(getIpAddress(ncConfig.dataIPAddress), partitionManager, ncConfig.nNetThreads,
+        netManager = new NetworkManager(ncConfig.dataIPAddress, ncConfig.dataPort, partitionManager, ncConfig.nNetThreads,
                 ncConfig.nNetBuffers);
 
         lccm = new LifeCycleComponentManager();
@@ -244,7 +244,7 @@ public class NodeControllerService extends AbstractRemoteService {
         ctx.getIOManager().setExecutor(executor);
         datasetPartitionManager = new DatasetPartitionManager(this, executor, ncConfig.resultManagerMemory,
                 ncConfig.resultTTL, ncConfig.resultSweepThreshold);
-        datasetNetworkManager = new DatasetNetworkManager(getIpAddress(ncConfig.datasetIPAddress),
+        datasetNetworkManager = new DatasetNetworkManager(ncConfig.datasetIPAddress, ncConfig.datasetPort,
                 datasetPartitionManager, ncConfig.nNetThreads, ncConfig.nNetBuffers);
     }
 

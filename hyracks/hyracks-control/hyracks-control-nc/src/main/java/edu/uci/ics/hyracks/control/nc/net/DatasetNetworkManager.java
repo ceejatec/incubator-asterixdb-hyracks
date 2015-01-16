@@ -15,7 +15,6 @@
 package edu.uci.ics.hyracks.control.nc.net;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -52,11 +51,11 @@ public class DatasetNetworkManager implements IChannelConnectionFactory {
 
     private NetworkAddress networkAddress;
 
-    public DatasetNetworkManager(InetAddress inetAddress, IDatasetPartitionManager partitionManager, int nThreads,
+    public DatasetNetworkManager(String inetAddress, int inetPort, IDatasetPartitionManager partitionManager, int nThreads,
             int nBuffers) throws IOException {
         this.partitionManager = partitionManager;
         this.nBuffers = nBuffers;
-        md = new MuxDemux(new InetSocketAddress(inetAddress, 0), new ChannelOpenListener(), nThreads,
+        md = new MuxDemux(new InetSocketAddress(inetAddress, inetPort), new ChannelOpenListener(), nThreads,
                 MAX_CONNECTION_ATTEMPTS);
     }
 
