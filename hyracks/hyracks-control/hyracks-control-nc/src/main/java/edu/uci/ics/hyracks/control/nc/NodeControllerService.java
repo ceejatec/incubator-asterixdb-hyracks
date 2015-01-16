@@ -244,7 +244,7 @@ public class NodeControllerService extends AbstractRemoteService {
         ctx.getIOManager().setExecutor(executor);
         datasetPartitionManager = new DatasetPartitionManager(this, executor, ncConfig.resultManagerMemory,
                 ncConfig.resultTTL, ncConfig.resultSweepThreshold);
-        datasetNetworkManager = new DatasetNetworkManager(ncConfig.datasetIPAddress, ncConfig.datasetPort,
+        datasetNetworkManager = new DatasetNetworkManager(ncConfig.resultIPAddress, ncConfig.resultPort,
                 datasetPartitionManager, ncConfig.nNetThreads, ncConfig.nNetBuffers);
     }
 
