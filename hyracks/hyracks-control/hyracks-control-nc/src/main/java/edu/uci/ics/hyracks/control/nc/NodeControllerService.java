@@ -378,22 +378,6 @@ public class NodeControllerService extends AbstractRemoteService {
         return queue;
     }
 
-    private static InetAddress getIpAddress(String ipaddrStr) throws Exception {
-        ipaddrStr = ipaddrStr.trim();
-        Pattern pattern = Pattern.compile("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
-        Matcher m = pattern.matcher(ipaddrStr);
-        if (!m.matches()) {
-            throw new Exception(MessageFormat.format(
-                    "Connection Manager IP Address String %s does is not a valid IP Address.", ipaddrStr));
-        }
-        byte[] ipBytes = new byte[4];
-        ipBytes[0] = (byte) Integer.parseInt(m.group(1));
-        ipBytes[1] = (byte) Integer.parseInt(m.group(2));
-        ipBytes[2] = (byte) Integer.parseInt(m.group(3));
-        ipBytes[3] = (byte) Integer.parseInt(m.group(4));
-        return InetAddress.getByAddress(ipBytes);
-    }
-
     private class HeartbeatTask extends TimerTask {
         private IClusterController cc;
 
