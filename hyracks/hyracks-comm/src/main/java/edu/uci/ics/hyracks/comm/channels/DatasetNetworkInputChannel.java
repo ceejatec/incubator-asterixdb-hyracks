@@ -59,6 +59,7 @@ public class DatasetNetworkInputChannel implements IInputChannel {
     public DatasetNetworkInputChannel(IChannelConnectionFactory netManager, SocketAddress remoteAddress, JobId jobId,
             ResultSetId resultSetId, int partition, int nBuffers) {
         this.netManager = netManager;
+        new Throwable("remoteAddress: " + remoteAddress).printStackTrace();
         this.remoteAddress = remoteAddress;
         this.jobId = jobId;
         this.resultSetId = resultSetId;

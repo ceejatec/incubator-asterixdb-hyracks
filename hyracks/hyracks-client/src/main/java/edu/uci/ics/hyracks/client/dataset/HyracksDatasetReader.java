@@ -66,6 +66,7 @@ public class HyracksDatasetReader implements IHyracksDatasetReader {
     public HyracksDatasetReader(IHyracksDatasetDirectoryServiceConnection datasetDirectoryServiceConnection,
             ClientNetworkManager netManager, DatasetClientContext datasetClientCtx, JobId jobId, ResultSetId resultSetId)
             throws Exception {
+        new Throwable().printStackTrace();
         this.datasetDirectoryServiceConnection = datasetDirectoryServiceConnection;
         this.netManager = netManager;
         this.datasetClientCtx = datasetClientCtx;

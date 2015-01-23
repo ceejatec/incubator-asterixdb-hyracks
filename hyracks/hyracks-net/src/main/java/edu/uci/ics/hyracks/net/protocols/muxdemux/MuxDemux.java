@@ -94,6 +94,7 @@ public class MuxDemux {
                         connectionMap.remove(remoteAddress);
                         mConn.setConnectionFailure();
                     } else {
+                        System.err.println("connectionFailure: " + remoteAddress);
                         mConn.setConnectionAttempts(nConnectionAttempts + 1);
                         tcpEndpoint.initiateConnection(remoteAddress);
                     }
@@ -131,6 +132,8 @@ public class MuxDemux {
             if (mConn == null) {
                 mConn = new MultiplexedConnection(this);
                 connectionMap.put(remoteAddress, mConn);
+                System.err.println ("connect: " + remoteAddress);
+                new Throwable().printStackTrace();
                 tcpEndpoint.initiateConnection(remoteAddress);
             }
         }

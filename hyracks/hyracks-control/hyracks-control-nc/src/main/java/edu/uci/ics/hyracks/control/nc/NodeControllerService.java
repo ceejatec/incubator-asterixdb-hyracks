@@ -269,12 +269,20 @@ public class NodeControllerService extends AbstractRemoteService {
         // Use "public" versions of network addresses and ports, if specified
         NetworkAddress datasetAddress = datasetNetworkManager.getNetworkAddress();
         if (ncConfig.resultPublicIPAddress != null) {
-            datasetAddress = new NetworkAddress(ncConfig.resultPublicIPAddress, ncConfig.resultPublicPort);
+            System.err.println("resultPublicIPAddress");
+            datasetAddress = new NetworkAddress
+                (ncConfig.resultPublicIPAddress,
+                 ncConfig.resultPublicPort == 0 ? ncConfig.resultPort : ncConfig.resultPublicPort);
         }
         NetworkAddress netAddress = netManager.getNetworkAddress();
         if (ncConfig.dataPublicIPAddress != null) {
-            netAddress = new NetworkAddress(ncConfig.dataPublicIPAddress, ncConfig.dataPublicPort);
+            System.err.println("dataPublicIPAddress");
+            netAddress = new NetworkAddress
+                (ncConfig.dataPublicIPAddress,
+                 ncConfig.dataPublicPort == 0 ? ncConfig.dataPort : ncConfig.dataPublicPort);
         }
+        System.err.println("datasetAddress: " + datasetAddress);
+        System.err.println("netAddress: " + netAddress);
         ccs.registerNode(new NodeRegistration(ipc.getSocketAddress(), id, ncConfig, netAddress,
                 datasetAddress, osMXBean.getName(), osMXBean.getArch(), osMXBean
                         .getVersion(), osMXBean.getAvailableProcessors(), runtimeMXBean.getVmName(), runtimeMXBean

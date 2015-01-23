@@ -44,6 +44,7 @@ public class DatasetDirectoryRecord implements Serializable {
 
     public void setNetworkAddress(NetworkAddress address) {
         this.address = address;
+        new Throwable(this.toString()).printStackTrace();
     }
 
     public NetworkAddress getNetworkAddress() {

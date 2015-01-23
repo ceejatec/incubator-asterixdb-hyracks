@@ -181,6 +181,9 @@ public class TCPEndpoint {
                                 distributeIncomingConnection(channel);
                             } else if (key.isConnectable()) {
                                 SocketChannel channel = (SocketChannel) sc;
+                                System.err.println("channel: " + channel);
+                                System.err.println("address: " + channel.getRemoteAddress());
+                                System.err.println("inet: " + (InetSocketAddress) channel.getRemoteAddress());
                                 boolean finishConnect = false;
                                 try {
                                     finishConnect = channel.finishConnect();
@@ -213,6 +216,7 @@ public class TCPEndpoint {
         }
 
         synchronized void initiateConnection(InetSocketAddress remoteAddress) {
+            System.err.println("Adding inetsocketaddress: " + remoteAddress);
             pendingConnections.add(remoteAddress);
             selector.wakeup();
         }

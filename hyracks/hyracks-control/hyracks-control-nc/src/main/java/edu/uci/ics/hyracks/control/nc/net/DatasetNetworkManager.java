@@ -55,6 +55,7 @@ public class DatasetNetworkManager implements IChannelConnectionFactory {
             int nBuffers) throws IOException {
         this.partitionManager = partitionManager;
         this.nBuffers = nBuffers;
+        new Throwable(inetAddress).printStackTrace();
         md = new MuxDemux(new InetSocketAddress(inetAddress, inetPort), new ChannelOpenListener(), nThreads,
                 MAX_CONNECTION_ATTEMPTS);
     }
@@ -66,6 +67,7 @@ public class DatasetNetworkManager implements IChannelConnectionFactory {
     }
 
     public NetworkAddress getNetworkAddress() {
+        new Throwable("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@ HELLO\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@").printStackTrace();
         return networkAddress;
     }
 

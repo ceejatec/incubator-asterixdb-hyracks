@@ -533,6 +533,7 @@ public class CCNCFunctions {
             this.partition = partition;
             this.nPartitions = nPartitions;
             this.networkAddress = networkAddress;
+            new Throwable(networkAddress.toString()).printStackTrace();
         }
 
         @Override
@@ -565,6 +566,7 @@ public class CCNCFunctions {
         }
 
         public NetworkAddress getNetworkAddress() {
+            new Throwable(networkAddress.toString()).printStackTrace();
             return networkAddress;
         }
     }

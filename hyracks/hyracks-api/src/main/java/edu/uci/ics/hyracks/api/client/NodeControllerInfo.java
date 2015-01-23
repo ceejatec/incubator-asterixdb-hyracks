@@ -46,6 +46,7 @@ public class NodeControllerInfo implements Serializable {
     }
 
     public NetworkAddress getNetworkAddress() {
+        new Throwable(netAddress.toString()).printStackTrace();
         return netAddress;
     }
 

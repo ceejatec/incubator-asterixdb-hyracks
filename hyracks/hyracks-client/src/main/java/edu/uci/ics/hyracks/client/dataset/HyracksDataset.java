@@ -33,6 +33,7 @@ public class HyracksDataset implements IHyracksDataset {
 
     public HyracksDataset(IHyracksClientConnection hcc, int frameSize, int nReaders) throws Exception {
         NetworkAddress ddsAddress = hcc.getDatasetDirectoryServiceInfo();
+        new Throwable("ddsAddress: " + ddsAddress).printStackTrace();
         datasetDirectoryServiceConnection = new HyracksDatasetDirectoryServiceConnection
             (ddsAddress.getAddress(), ddsAddress.getPort());
 
