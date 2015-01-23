@@ -171,7 +171,7 @@ public class NodeControllerService extends AbstractRemoteService {
         }
         partitionManager = new PartitionManager(this);
         netManager = new NetworkManager(ncConfig.dataIPAddress, ncConfig.dataPort, partitionManager, ncConfig.nNetThreads,
-                ncConfig.nNetBuffers);
+                                        ncConfig.nNetBuffers, ncConfig.dataPublicIPAddress, ncConfig.dataPublicPort);
 
         lccm = new LifeCycleComponentManager();
         queue = new WorkQueue();
@@ -243,10 +243,11 @@ public class NodeControllerService extends AbstractRemoteService {
 
     private void init() throws Exception {
         ctx.getIOManager().setExecutor(executor);
-        datasetPartitionManager = new DatasetPartitionManager(this, executor, ncConfig.resultManagerMemory,
-                ncConfig.resultTTL, ncConfig.resultSweepThreshold);
-        datasetNetworkManager = new DatasetNetworkManager(ncConfig.resultIPAddress, ncConfig.resultPort,
-                datasetPartitionManager, ncConfig.nNetThreads, ncConfig.nNetBuffers);
+        datasetPartitionManager = new DatasetPartitionManager
+            (this, executor, ncConfig.resultManagerMemory, ncConfig.resultTTL, ncConfig.resultSweepThreshold);
+        datasetNetworkManager = new DatasetNetworkManager
+            (ncConfig.resultIPAddress, ncConfig.resultPort, datasetPartitionManager,
+             ncConfig.nNetThreads, ncConfig.nNetBuffers, ncConfig.resultPublicIPAddress, ncConfig.resultPublicPort);
     }
 
     @Override
@@ -266,12 +267,9 @@ public class NodeControllerService extends AbstractRemoteService {
             gcInfos[i] = new HeartbeatSchema.GarbageCollectorInfo(gcMXBeans.get(i).getName());
         }
         HeartbeatSchema hbSchema = new HeartbeatSchema(gcInfos);
-        // Use "public" versions of network addresses and ports, if specified
-        NetworkAddress datasetAddress = datasetNetworkManager.getNetworkAddress();
-        if (ncConfig.resultPublicIPAddress != null) {
-            datasetAddress = new NetworkAddress(ncConfig.resultPublicIPAddress, ncConfig.resultPublicPort);
-        }
-        NetworkAddress netAddress = netManager.getNetworkAddress();
+        // Use "public" versions of network addresses and ports
+        NetworkAddress datasetAddress = datasetNetworkManager.getPublicNetworkAddress();
+        NetworkAddress netAddress = netManager.getPublicNetworkAddress();
         if (ncConfig.dataPublicIPAddress != null) {
             netAddress = new NetworkAddress(ncConfig.dataPublicIPAddress, ncConfig.dataPublicPort);
         }
