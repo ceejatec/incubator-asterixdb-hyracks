@@ -46,7 +46,6 @@ public class AlgebricksHyracksIntegrationUtil {
         ccConfig.clientNetPort = TEST_HYRACKS_CC_CLIENT_NET_PORT;
         ccConfig.clusterNetIpAddress = "127.0.0.1";
         ccConfig.clusterNetPort = TEST_HYRACKS_CC_CLUSTER_NET_PORT;
-        // ccConfig.useJOL = true;
         cc = new ClusterControllerService(ccConfig);
         cc.start();
 
