@@ -125,6 +125,8 @@ public class FieldCursorForDelimitedDataParser {
                         } else if (ch == '\r' && !startedQuote) {
                             start = p + 1;
                             state = State.CR;
+                            lineCount++;
+                            lastDelimiterPosition = p;
                             break;
                         }
                         ++p;
@@ -143,7 +145,12 @@ public class FieldCursorForDelimitedDataParser {
                     if (ch == '\n' && !startedQuote) {
                         ++start;
                         state = State.EOR;
-                        lineCount++;
+                        // We read a CR earlier and incremented
+                        // lineCount. Now we discover it is followed
+                        // by a LF. We just want to consume that LF
+                        // and continue forward.  So we "fall off the
+                        // end" of this case into the next block for
+                        // EOR.
                     } else {
                         state = State.IN_RECORD;
                         return true;
@@ -296,6 +303,7 @@ public class FieldCursorForDelimitedDataParser {
                             fEnd = p;
                             start = p + 1;
                             state = State.CR;
+                            lineCount++;
                             lastDelimiterPosition = p;
                             return true;
                         } else if (startedQuote && lastQuotePosition == p - 1 && lastDoubleQuotePosition != p - 1
@@ -306,6 +314,7 @@ public class FieldCursorForDelimitedDataParser {
                             lastDelimiterPosition = p;
                             start = p + 1;
                             state = State.CR;
+                            lineCount++;
                             startedQuote = false;
                             return true;
                         }
