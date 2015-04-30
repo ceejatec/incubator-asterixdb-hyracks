@@ -108,16 +108,14 @@ public class IPCConnectionManager {
                     attempt++;
                     Thread.sleep(5000);
                 }
-            }
-            else if (attempt < retries) {
+            } else if (attempt < retries) {
                 if (LOGGER.isLoggable(Level.INFO)) {
                     LOGGER.info("Connection to " + remoteAddress +
                             " failed (Attempt " + attempt + " of " + retries + ")");
                     attempt++;
                     Thread.sleep(5000);
                 }
-            }
-            else {
+            } else {
                 throw new IOException("Connection failed to " + remoteAddress);
             }
         }
