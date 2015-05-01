@@ -76,7 +76,7 @@ public class FieldCursorForDelimitedDataParser {
 
     public boolean nextRecord() throws IOException {
         recordCount++;
-        fieldCount = 1;
+        fieldCount = 0;
         while (true) {
             switch (state) {
                 case INIT:
@@ -171,6 +171,7 @@ public class FieldCursorForDelimitedDataParser {
     }
 
     public boolean nextField() throws IOException {
+        fieldCount++;
         switch (state) {
             case INIT:
             case EOR:
