@@ -14,6 +14,7 @@
  */
 package edu.uci.ics.hyracks.control.nc;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,11 +31,16 @@ public class NCDriver {
             CmdLineParser cp = new CmdLineParser(ncConfig);
             try {
                 cp.parseArgument(args);
+                if (ncConfig.enableDeploy) {
+                    ncConfig.loadINIFile();
+                }
             } catch (Exception e) {
+                e.printStackTrace();
                 System.err.println(e.getMessage());
                 cp.printUsage(System.err);
                 return;
             }
+            ncConfig.applyDefaults();
 
             final NodeControllerService nService = new NodeControllerService(ncConfig);
             if (LOGGER.isLoggable(Level.INFO)) {

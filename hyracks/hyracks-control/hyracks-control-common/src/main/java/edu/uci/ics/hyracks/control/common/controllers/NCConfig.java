@@ -14,10 +14,13 @@
  */
 package edu.uci.ics.hyracks.control.common.controllers;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.ini4j.Wini;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.StopOptionHandler;
@@ -31,7 +34,10 @@ public class NCConfig implements Serializable {
     @Option(name = "-cc-port", usage = "Cluster Controller port (default: 1099)", required = false)
     public int ccPort = 1099;
 
-    @Option(name = "-cluster-net-ip-address", usage = "IP Address to bind cluster listener", required = true)
+    @Option(name = "-address", usage = "IP Address for NC", required = false)
+    public String ipAddress = "127.0.0.1";
+
+    @Option(name = "-cluster-net-ip-address", usage = "IP Address to bind cluster listener (default: same as -address)", required = false)
     public String clusterNetIPAddress;
 
     @Option(name = "-cluster-net-port", usage = "IP port to bind cluster listener (default: random port)", required = false)
@@ -46,7 +52,7 @@ public class NCConfig implements Serializable {
     @Option(name = "-node-id", usage = "Logical name of node controller unique within the cluster", required = true)
     public String nodeId;
 
-    @Option(name = "-data-ip-address", usage = "IP Address to bind data listener", required = true)
+    @Option(name = "-data-ip-address", usage = "IP Address to bind data listener (default: same as -address)", required = false)
     public String dataIPAddress;
 
     @Option(name = "-data-port", usage = "IP port to bind data listener (default: random port)", required = false)
@@ -58,7 +64,7 @@ public class NCConfig implements Serializable {
     @Option(name = "-data-public-port", usage = "Public IP port to announce data listener (default: same as -data-port; must set -data-public-ip-address also)", required = false)
     public int dataPublicPort = 0;
 
-    @Option(name = "-result-ip-address", usage = "IP Address to bind dataset result distribution listener", required = true)
+    @Option(name = "-result-ip-address", usage = "IP Address to bind dataset result distribution listener (default: same as -address)", required = false)
     public String resultIPAddress;
 
     @Option(name = "-result-port", usage = "IP port to bind dataset result distribution listener (default: random port)", required = false)
@@ -94,9 +100,82 @@ public class NCConfig implements Serializable {
     @Option(name = "-app-nc-main-class", usage = "Application NC Main Class")
     public String appNCMainClass;
 
+    @Option(name = "-test-deploy", usage = "Enables new deployment mechanisms [testing only]")
+    public boolean enableDeploy = false;
+
+    @Option(name = "-config-file", usage = "Specify alternate path to local configuration file (default: /etc/nc.conf")
+    public String configFile = "/etc/nc.conf";
+
     @Argument
     @Option(name = "--", handler = StopOptionHandler.class)
     public List<String> appArgs;
+
+
+    private String getStringINIOpt(Wini ini, String section, String key, String default_value) {
+        String value = ini.get(section, key, String.class);
+        return (value != null) ? value : default_value;
+    }
+
+    private int getIntINIOpt(Wini ini, String section, String key, int default_value) {
+        Integer value = ini.get(section, key, Integer.class);
+        return (value != null) ? value : default_value;
+    }
+
+    public void loadINIFile() throws IOException {
+        // QQQ For now, we use values from the .conf file only to override
+        // values specified on the command-line. That may change.
+        Wini ini = new Wini(new File(configFile));
+        System.err.println("HELLO WORLD: " + ini.toString());
+
+        ccHost = getStringINIOpt(ini, "nc", "ccHost", ccHost);
+        ccPort = getIntINIOpt(ini, "nc", "ccPort", ccPort);
+        nodeId = getStringINIOpt(ini, "nc", "id", nodeId);
+        System.err.println(ccHost);
+        System.err.println(ccPort);
+
+        // Network ports
+
+        ipAddress = getStringINIOpt(ini, "nc", "address", ipAddress);
+
+        clusterNetIPAddress = getStringINIOpt(ini, "nc", "cluster.address", clusterNetIPAddress);
+        clusterNetPort = getIntINIOpt(ini, "nc", "cluster.port", clusterNetPort);
+        dataIPAddress = getStringINIOpt(ini, "nc", "data.address", dataIPAddress);
+        dataPort = getIntINIOpt(ini, "nc", "data.port", dataPort);
+        resultIPAddress = getStringINIOpt(ini, "nc", "result.address", resultIPAddress);
+        resultPort = getIntINIOpt(ini, "nc", "result.port", resultPort);
+
+        clusterNetPublicIPAddress = getStringINIOpt(ini, "nc", "public.cluster.address", clusterNetPublicIPAddress);
+        clusterNetPublicPort = getIntINIOpt(ini, "nc", "public.cluster.port", clusterNetPublicPort);
+        dataPublicIPAddress = getStringINIOpt(ini, "nc", "public.data.address", dataPublicIPAddress);
+        dataPublicPort = getIntINIOpt(ini, "nc", "public.data.port", dataPublicPort);
+        resultPublicIPAddress = getStringINIOpt(ini, "nc", "public.result.address", resultPublicIPAddress);
+        resultPublicPort = getIntINIOpt(ini, "nc", "public.result.port", resultPublicPort);
+
+        // Directories
+
+        // QQQ this should be an array
+        ioDevices = getStringINIOpt(ini, "nc", "iodevice", ioDevices);
+    }
+
+    /**
+     * Once all @Option fields have been loaded from command-line or INI
+     * file, call this to resolve any unset optional arguments to their
+     * default values.
+     */
+    public void applyDefaults() {
+        // "address" is the default for all IP addresses
+        if (clusterNetIPAddress == null) clusterNetIPAddress = ipAddress;
+        if (dataIPAddress == null) dataIPAddress = ipAddress;
+        if (resultIPAddress == null) resultIPAddress = ipAddress;
+
+        // All "public" options default to their "non-public" versions
+        if (clusterNetPublicIPAddress == null) clusterNetPublicIPAddress = clusterNetIPAddress;
+        if (clusterNetPublicPort == 0) clusterNetPublicPort = clusterNetPort;
+        if (dataPublicIPAddress == null) dataPublicIPAddress = dataIPAddress;
+        if (dataPublicPort == 0) dataPublicPort = dataPort;
+        if (resultPublicIPAddress == null) resultPublicIPAddress = resultIPAddress;
+        if (resultPublicPort == 0) resultPublicPort = resultPort;
+    }
 
     public void toCommandLine(List<String> cList) {
         cList.add("-cc-host");
