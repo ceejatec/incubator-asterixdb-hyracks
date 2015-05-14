@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.ini4j.Ini;
 import org.ini4j.Wini;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -111,12 +113,12 @@ public class NCConfig implements Serializable {
     public List<String> appArgs;
 
 
-    private String getStringINIOpt(Wini ini, String section, String key, String default_value) {
+    private String getStringINIOpt(Ini ini, String section, String key, String default_value) {
         String value = ini.get(section, key, String.class);
         return (value != null) ? value : default_value;
     }
 
-    private int getIntINIOpt(Wini ini, String section, String key, int default_value) {
+    private int getIntINIOpt(Ini ini, String section, String key, int default_value) {
         Integer value = ini.get(section, key, Integer.class);
         return (value != null) ? value : default_value;
     }
@@ -124,7 +126,7 @@ public class NCConfig implements Serializable {
     public void loadINIFile() throws IOException {
         // QQQ For now, we use values from the .conf file only to override
         // values specified on the command-line. That may change.
-        Wini ini = new Wini(new File(configFile));
+        Ini ini = new Ini(new File(configFile));
         System.err.println("HELLO WORLD: " + ini.toString());
 
         ccHost = getStringINIOpt(ini, "nc", "ccHost", ccHost);
@@ -153,8 +155,13 @@ public class NCConfig implements Serializable {
 
         // Directories
 
-        // QQQ this should be an array
-        ioDevices = getStringINIOpt(ini, "nc", "iodevice", ioDevices);
+        String[] iodevs = ini.get("nc").getAll("iodevice", String[].class);
+        if (iodevs.length > 0) {
+            // QQQ Here we join these together with commas, only so that
+            // NodeControllerService.getDevices() can split it apart on comma.
+            // This could be optimized.
+            ioDevices = StringUtils.join(iodevs, ",");
+        }
     }
 
     /**
