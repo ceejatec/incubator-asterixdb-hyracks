@@ -14,11 +14,10 @@
  */
 package edu.uci.ics.hyracks.control.cc.web;
 
-import java.util.EnumSet;
-import java.util.logging.Logger;
-
-import javax.servlet.DispatcherType;
-
+import edu.uci.ics.hyracks.control.cc.ClusterControllerService;
+import edu.uci.ics.hyracks.control.cc.adminconsole.HyracksAdminConsoleApplication;
+import edu.uci.ics.hyracks.control.cc.web.util.JSONOutputRequestHandler;
+import edu.uci.ics.hyracks.control.cc.web.util.RoutingHandler;
 import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.protocol.http.ContextParamWebApplicationFactory;
@@ -34,10 +33,9 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import edu.uci.ics.hyracks.control.cc.ClusterControllerService;
-import edu.uci.ics.hyracks.control.cc.adminconsole.HyracksAdminConsoleApplication;
-import edu.uci.ics.hyracks.control.cc.web.util.JSONOutputRequestHandler;
-import edu.uci.ics.hyracks.control.cc.web.util.RoutingHandler;
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
+import java.util.logging.Logger;
 
 public class WebServer {
     private final static Logger LOGGER = Logger.getLogger(WebServer.class.getName());
@@ -71,6 +69,10 @@ public class WebServer {
 
         addHandler(createAdminConsoleHandler());
         addHandler(createStaticResourcesHandler());
+
+        handler = new ContextHandler("/config");
+        handler.setHandler(new ConfigHandler());
+        addHandler(handler);
 
         /** the service of uploading/downloading deployment jars */
         handler = new ContextHandler("/applications");
