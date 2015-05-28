@@ -16,7 +16,10 @@ package edu.uci.ics.hyracks.control.common.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -123,10 +126,18 @@ public class NCConfig implements Serializable {
         return (value != null) ? value : default_value;
     }
 
+    private InputStream getConfigFromCC() throws IOException {
+        // QQQ Obviously should not be hardcoded
+        URL url = new URL("http://localhost:16001/config");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        return conn.getInputStream();
+    }
+
     public void loadINIFile() throws IOException {
         // QQQ For now, we use values from the .conf file only to override
         // values specified on the command-line. That may change.
-        Ini ini = new Ini(new File(configFile));
+        //Ini ini = new Ini(new File(configFile));
+        Ini ini = new Ini(getConfigFromCC());
         System.err.println("HELLO WORLD: " + ini.toString());
 
         ccHost = getStringINIOpt(ini, "nc", "ccHost", ccHost);
