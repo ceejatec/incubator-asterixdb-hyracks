@@ -1,5 +1,7 @@
 package edu.uci.ics.hyracks.control.nc.service;
 
+import edu.uci.ics.hyracks.control.common.controllers.NCConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.ini4j.Ini;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -77,20 +79,59 @@ public class NCService {
             return null;
         }
     }
+
+    private static NCConfig createNCConfig() {
+        // QQQ error checking for required args
+        NCConfig nc = new NCConfig();
+        // QQQ this default-value stuff is spread over too many places - NCConfig parameters itself,
+        // these getFooINIOpt() methods (and their values here), NCConfig.applyDefaults()...
+        // need to consolidate.
+        nc.ccHost = getStringINIOpt("cc", "host", nc.ccHost);
+        // QQQ Not sure cluster.port is the right name here, but it has to
+        // be different than the servlet port that main() reads. It should
+        // come back from the CC, come to think of it.
+        nc.ccPort = getIntINIOpt("cc", "cluster.port", nc.ccPort);
+        nc.nodeId = getStringINIOpt("nc", "id", nc.nodeId);
+
+        // Network ports
+
+        nc.ipAddress = getStringINIOpt("nc", "address", nc.ipAddress);
+
+        nc.clusterNetIPAddress = getStringINIOpt("nc", "cluster.address", nc.clusterNetIPAddress);
+        nc.clusterNetPort = getIntINIOpt("nc", "cluster.port", nc.clusterNetPort);
+        nc.dataIPAddress = getStringINIOpt("nc", "data.address", nc.dataIPAddress);
+        nc.dataPort = getIntINIOpt("nc", "data.port", nc.dataPort);
+        nc.resultIPAddress = getStringINIOpt("nc", "result.address", nc.resultIPAddress);
+        nc.resultPort = getIntINIOpt("nc", "result.port", nc.resultPort);
+
+        nc.clusterNetPublicIPAddress = getStringINIOpt("nc", "public.cluster.address", nc.clusterNetPublicIPAddress);
+        nc.clusterNetPublicPort = getIntINIOpt("nc", "public.cluster.port", nc.clusterNetPublicPort);
+        nc.dataPublicIPAddress = getStringINIOpt("nc", "public.data.address", nc.dataPublicIPAddress);
+        nc.dataPublicPort = getIntINIOpt("nc", "public.data.port", nc.dataPublicPort);
+        nc.resultPublicIPAddress = getStringINIOpt("nc", "public.result.address", nc.resultPublicIPAddress);
+        nc.resultPublicPort = getIntINIOpt("nc", "public.result.port", nc.resultPublicPort);
+
+        // Directories
+        nc.ioDevices = getStringINIOpt("nc", "iodevices", null);
+
+        nc.applyDefaults();
+        return nc;
+    }
+
     private static List<String> buildCommand() {
         List<String> cList = new ArrayList<String>();
-        String val;
         cList.add("hyracksnc");
-        cList.add("-node-id");
-        cList.add("nc1");
-        cList.add("-cc-host");
-        cList.add("localhost");
-        cList.add("-iodevices");
-        cList.add("/tmp/nc1");
+        createNCConfig().toCommandLine(cList);
+        for (String foo : cList) {
+            System.out.println("###### " + foo);
+        }
         return cList;
     }
 
     private static void configEnvironment(Map<String,String> env) {
+        if (env.containsKey("JAVA_OPTS")) {
+            return;
+        }
         String jvmargs = getStringINIOpt("nc", "jvm.args", "-Xmx1536m");
         env.put("JAVA_OPTS", jvmargs);
     }

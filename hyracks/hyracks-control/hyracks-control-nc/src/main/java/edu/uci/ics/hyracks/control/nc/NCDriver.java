@@ -31,9 +31,6 @@ public class NCDriver {
             CmdLineParser cp = new CmdLineParser(ncConfig);
             try {
                 cp.parseArgument(args);
-                if (ncConfig.enableDeploy) {
-                    ncConfig.loadINIFile();
-                }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println(e.getMessage());

@@ -115,66 +115,6 @@ public class NCConfig implements Serializable {
     @Option(name = "--", handler = StopOptionHandler.class)
     public List<String> appArgs;
 
-
-    private String getStringINIOpt(Ini ini, String section, String key, String default_value) {
-        String value = ini.get(section, key, String.class);
-        return (value != null) ? value : default_value;
-    }
-
-    private int getIntINIOpt(Ini ini, String section, String key, int default_value) {
-        Integer value = ini.get(section, key, Integer.class);
-        return (value != null) ? value : default_value;
-    }
-
-    private InputStream getConfigFromCC() throws IOException {
-        // QQQ Obviously should not be hardcoded
-        URL url = new URL("http://localhost:16001/config");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        return conn.getInputStream();
-    }
-
-    public void loadINIFile() throws IOException {
-        // QQQ For now, we use values from the .conf file only to override
-        // values specified on the command-line. That may change.
-        //Ini ini = new Ini(new File(configFile));
-        Ini ini = new Ini(getConfigFromCC());
-        System.err.println("HELLO WORLD: " + ini.toString());
-
-        ccHost = getStringINIOpt(ini, "nc", "ccHost", ccHost);
-        ccPort = getIntINIOpt(ini, "nc", "ccPort", ccPort);
-        nodeId = getStringINIOpt(ini, "nc", "id", nodeId);
-        System.err.println(ccHost);
-        System.err.println(ccPort);
-
-        // Network ports
-
-        ipAddress = getStringINIOpt(ini, "nc", "address", ipAddress);
-
-        clusterNetIPAddress = getStringINIOpt(ini, "nc", "cluster.address", clusterNetIPAddress);
-        clusterNetPort = getIntINIOpt(ini, "nc", "cluster.port", clusterNetPort);
-        dataIPAddress = getStringINIOpt(ini, "nc", "data.address", dataIPAddress);
-        dataPort = getIntINIOpt(ini, "nc", "data.port", dataPort);
-        resultIPAddress = getStringINIOpt(ini, "nc", "result.address", resultIPAddress);
-        resultPort = getIntINIOpt(ini, "nc", "result.port", resultPort);
-
-        clusterNetPublicIPAddress = getStringINIOpt(ini, "nc", "public.cluster.address", clusterNetPublicIPAddress);
-        clusterNetPublicPort = getIntINIOpt(ini, "nc", "public.cluster.port", clusterNetPublicPort);
-        dataPublicIPAddress = getStringINIOpt(ini, "nc", "public.data.address", dataPublicIPAddress);
-        dataPublicPort = getIntINIOpt(ini, "nc", "public.data.port", dataPublicPort);
-        resultPublicIPAddress = getStringINIOpt(ini, "nc", "public.result.address", resultPublicIPAddress);
-        resultPublicPort = getIntINIOpt(ini, "nc", "public.result.port", resultPublicPort);
-
-        // Directories
-
-        String[] iodevs = ini.get("nc").getAll("iodevice", String[].class);
-        if (iodevs.length > 0) {
-            // QQQ Here we join these together with commas, only so that
-            // NodeControllerService.getDevices() can split it apart on comma.
-            // This could be optimized.
-            ioDevices = StringUtils.join(iodevs, ",");
-        }
-    }
-
     /**
      * Once all @Option fields have been loaded from command-line or INI
      * file, call this to resolve any unset optional arguments to their
