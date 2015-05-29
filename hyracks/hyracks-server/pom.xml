@@ -61,6 +61,10 @@
                   <name>hyracksnc</name>
                 </program>
                 <program>
+                  <mainClass>edu.uci.ics.hyracks.control.nc.service.NCService</mainClass>
+                  <name>hyracksncservice</name>
+                </program>
+                <program>
                   <mainClass>edu.uci.ics.hyracks.server.drivers.VirtualClusterDriver</mainClass>
                   <name>hyracks-virtual-cluster</name>
                 </program>
@@ -105,6 +109,13 @@
   	<dependency>
   		<groupId>edu.uci.ics.hyracks</groupId>
   		<artifactId>hyracks-control-nc</artifactId>
+  		<version>0.2.16-SNAPSHOT</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>edu.uci.ics.hyracks</groupId>
+  		<artifactId>hyracks-nc-service</artifactId>
   		<version>0.2.16-SNAPSHOT</version>
   		<type>jar</type>
   		<scope>compile</scope>
